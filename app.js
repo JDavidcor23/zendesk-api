@@ -3,7 +3,7 @@ require('dotenv').config();
 global.appRoot = __dirname.replace(/'\'/g, "/");
 const moment = require('moment-timezone');
 moment.tz.setDefault(process.env.TIMEZONE);
-
+const ticketController = require('./app/controllers/ticket.controller');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer'); // Agrega la importación de multer
@@ -47,6 +47,14 @@ app.post("/webhook/zendesk", (req, res) => {
   console.log("🎯 Webhook recibido:", JSON.stringify(req.body, null, 2));
   res.sendStatus(200);
 });
+app.post("/form", ticketController.createTicket);
+
+app.get("/by-email", ticketController.getTicketsByEmail);
+
+app.put("/update/:ticketId/:email", ticketController.updateTicket);
+
+app.get("/status/:ticketId", ticketController.getTicketStatus);
+
 app.use('/api', routes.v1);
 app.use(handlerErrors);
 
